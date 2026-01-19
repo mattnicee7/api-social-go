@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"api-social-go/src/autenticacao"
 	"api-social-go/src/banco"
 	"api-social-go/src/modelos"
 	"api-social-go/src/repositorios"
 	"api-social-go/src/respostas"
 	"api-social-go/src/seguranca"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -46,5 +48,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write([]byte("Voce esta logado! Parabens."))
+	token, _ := autenticacao.CriarToken(usuarioSalvoNoBanco.ID)
+	fmt.Println(token)
+	w.Write([]byte(token))
 }
