@@ -1,11 +1,13 @@
 package controllers
 
 import (
+	"api-social-go/src/autenticacao"
 	"api-social-go/src/banco"
 	"api-social-go/src/modelos"
 	"api-social-go/src/repositorios"
 	"api-social-go/src/respostas"
 	"encoding/json"
+	"errors"
 	"io/ioutil"
 	"net/http"
 	"strconv"
@@ -110,6 +112,17 @@ func AtualizarUsuario(w http.ResponseWriter, r *http.Request) {
 
 	if erro != nil {
 		respostas.Erro(w, http.StatusBadRequest, erro)
+		return
+	}
+
+	usuarioIDNoToken, erro := autenticacao.ExtrairUsuarioID(r)
+	if erro != nil {
+		respostas.Erro(w, http.StatusUnauthorized, erro)
+		return
+	}
+
+	if usuarioID != usuarioIDNoToken {
+		respostas.Erro(w, http.StatusForbidden, errors.New("Nao e possivel atualizar um usuario que nao seja o seu"))
 		return
 	}
 
